@@ -1,0 +1,24 @@
+pip install scapy
+from scapy.all import sniff, IP, TCP, UDP, Raw
+
+def process_packet(packet):
+    if IP in packet:
+        ip_src = packet[IP].src
+        ip_dst = packet[IP].dst
+        proto = packet[IP].proto
+
+        print(f"\n[+] Packet:")
+        print(f"    Source IP      : {ip_src}")
+        print(f"    Destination IP : {ip_dst}")
+        print(f"    Protocol       : {proto}")
+
+        if TCP in packet:
+            print(f"    [TCP] Source Port: {packet[TCP].sport}, Dest Port: {packet[TCP].dport}")
+        elif UDP in packet:
+            print(f"    [UDP] Source Port: {packet[UDP].sport}, Dest Port: {packet[UDP].dport}")
+
+        if Raw in packet:
+            print(f"    Payload        : {packet[Raw].load[:50]}...")
+
+print("Starting packet capture... (Press Ctrl+C to stop)\n")
+sniff(prn=process_packet, store=False)
